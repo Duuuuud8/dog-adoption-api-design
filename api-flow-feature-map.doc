@@ -1,0 +1,125 @@
+User Registration
+    ↓
+Registration Form
+    ↓
+POST auth/register
+    ↓
+Validate email/password
+    ↓
+Hash and salt password with bcrypt
+    ↓
+Save user to MongoDB
+    ↓
+Return JWT token (for email save/remember me)
+    ↓
+User Login
+
+
+User Login
+    ↓
+Post auth/login
+    ↓
+Compare password with bcrypt
+    ↓
+Return JWT token (expires in 24hrs)
+
+
+User request
+    ↓
+Authrization Middleware
+    ↓
+Verify JWT
+    ↓
+Allow acces to route
+    ↓
+Controller logic
+    ↓
+Database
+    ↓
+JSON Response
+
+
+Dog Adoption
+    ↓
+User clicks adopt
+    ↓
+Post /dogs/:id/adopt
+    ↓
+Auth Middleware
+    ↓
+Find Dog in database
+    ↓
+Update adopted status
+    ↓
+Save to database
+    ↓
+Return success response
+
+
+Listing new Dogs
+    ↓
+User fill dog form
+    ↓
+Post /dogs
+    ↓
+Auth Middleware
+    ↓
+Validate Dog Data
+    ↓
+Save dog to database
+    ↓
+Return success response
+
+
+View Dogs
+    ↓
+Get /dogs
+    ↓
+Auth middleware
+    ↓
+Fetch dogs from database
+    ↓
+Apply filters/pagination
+    ↓
+Return Dogs JSON
+
+
+Removing Dogs
+    ↓
+User clicks Delete
+    ↓
+Delete /dogs/:id
+    ↓
+Auth Middleware
+    ↓
+Find dog in database
+    ↓
+Verify User owns dog = true
+    ↓
+Check if Dog is Adopted
+    ↓
+Delete dog
+    ↓
+Return success response
+
+Pagination
+    ↓
+Get /dogs?page=2&limit=10
+    ↓
+Auth middleware
+    ↓
+Read query params
+    ↓
+Fetch limited Results
+    ↓
+Return paginated JSON response
+
+Permissions/restrictions
+    ↓
+Verify JWT token
+    ↓
+Identify Current User
+    ↓
+Check ownership
+    ↓
+Allow/Deny
