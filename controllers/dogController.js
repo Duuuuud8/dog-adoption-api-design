@@ -68,6 +68,70 @@ const viewDogs = async (req, res) => {
 };
 
 
+const viewRegisteredDogs = async (req, res) => {
+    const { 
+            page = 1,
+            limit = 10,
+            isAdopted
+        } = req.query;
+            // sets up pagination
+
+    try{
+        const filter = { owner: req.user.id };
+            // sets up for filtering
+        if (isAdopted !== undefined) {
+            filter.isAdopted = isAdopted === "true";
+        }
+            // just means "true" === "true" coverts  string to boolean to match
+            // undefined means not included in url, true show dogs adopted/ false shows dogs not adopted
+        const skip = (Number(page) -1) * Number(limit);
+            // don't skip any pages if page is 1 etc.
+        const dogs = await Dog.find(filter)
+                                    // gets matching dogs
+                                .skip(skip)
+                                    // skips records for pagination
+                                .limit(Number(limit));
+                                    // restricts results shown Number(limit) converts string to number
+                // Mongo query chaining
+        return res.json({
+            dogs
+        });
+    } catch (err) {
+        return res.status(500).json({
+            error: err.message
+        });
+    }
+};
+
+const viewAdoptedDogs = async (req, res) => {
+    const { 
+            page = 1,
+            limit = 10,
+            isAdopted
+        } = req.query;
+            // sets up pagination
+
+    try{
+        const skip = (Number(page) -1) * Number(limit);
+            // don't skip any pages if page is 1 etc.
+        const dogs = await Dog.find({ adoptedBy: req.user.id })
+                                    // gets matching dogs
+                                .skip(skip)
+                                    // skips records for pagination
+                                .limit(Number(limit));
+                                    // restricts results shown Number(limit) converts string to number
+                // Mongo query chaining
+        return res.json({
+            dogs
+        });
+    } catch (err) {
+        return res.status(500).json({
+            error: err.message
+        });
+    }
+};
+
+
 const adoptDog = async (req, res) => {
     try{
         const dog = await Dog.findById(req.params.id);
@@ -148,6 +212,8 @@ const deleteDog = async (req, res) => {
 module.exports = {
     createDog, 
     viewDogs,
+    viewRegisteredDogs,
+    viewAdoptedDogs,
     adoptDog,
     deleteDog
 };

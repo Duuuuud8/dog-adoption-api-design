@@ -3,7 +3,7 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 
 
-const { createDog, viewDogs, adoptDog, deleteDog } = require("../controllers/dogController");
+const { createDog, viewDogs, viewRegisteredDogs, viewAdoptedDogs, adoptDog, deleteDog } = require("../controllers/dogController");
 
 
 router.post(
@@ -16,6 +16,18 @@ router.get(
     "/",
     authMiddleware,
     viewDogs
+);
+
+router.get(
+    "/registered",
+    authMiddleware,
+    viewRegisteredDogs
+);
+
+router.get(
+    "/adopted",
+    authMiddleware,
+    viewAdoptedDogs
 );
 
 router.patch(

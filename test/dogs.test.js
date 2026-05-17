@@ -79,6 +79,60 @@ describe("Dog Routes", () => {
         });
     });
 
+    describe("GET /dogs/registered", () => {
+        it("Should return all registered dogs by logged in user", async () => {
+            await request(app)
+                    .post("/dogs")
+                    .set("Authorization", `Bearer ${token}`)
+                    .send({
+                        name: "Roxy",
+                        breed: "Land Seal",
+                        description: "Squishy"
+                    });
+            const res = await request(app)
+                                .get("/dogs/registered")
+                                .set("Authorization", `Bearer ${token}`);
+            expect(res.status).to.equal(200);
+            expect(res.body.dogs).to.be.an("array");
+            expect(res.body.dogs.length).to.equal(1);
+            expect(res.body.dogs[0].name).to.equal("Roxy");
+        });
+    });
+
+    describe("GET /dogs/adopted", () => {
+        it("Should return all adopted dogs by logged in user", async () => {
+            const dogRes = await request(app)
+                                .post("/dogs")
+                                .set("Authorization", `Bearer ${token}`)
+                                .send({
+                                    name: "Roxy",
+                                    breed: "Land Seal",
+                                    description: "Squishy"
+                                });
+            const dogId = dogRes.body.dog._id;
+            const secondUserRes = await request(app)
+                                        .post("/auth/register")
+                                        .send({
+                                            username: "adopter",
+                                            password: "password123"
+                                        });
+            const secondToken = secondUserRes.body.token;
+            const adoptRes = await request(app)
+                                .patch(`/dogs/${dogId}/adopt`)
+                                .set("Authorization", `Bearer ${secondToken}`)
+                                .send({
+                                    thankYouMessage: "I love this dog"
+                                });
+            const adoptedDogsRes = await request(app)
+                                .get("/dogs/adopted")
+                                .set("Authorization", `Bearer ${secondToken}`);
+            expect(adoptedDogsRes.status).to.equal(200);
+            expect(adoptedDogsRes.body.dogs).to.be.an("array");
+            expect(adoptedDogsRes.body.dogs.length).to.equal(1);
+            expect(adoptedDogsRes.body.dogs[0].name).to.equal("Roxy");
+        });
+    });
+
     describe("PATCH /dogs/:id/adopt", () => {
         it("Should allow another user to adopt a dog", async () => {
             const dogRes = await request(app)
