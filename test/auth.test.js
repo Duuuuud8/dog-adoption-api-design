@@ -1,10 +1,27 @@
+process.env.NODE_ENV = "test";
+
+require("dotenv").config();
+
 const request = require("supertest");
     // simulate http requests
 const chai = require("chai");
+const mongoose = require("mongoose");
+
+const User = require("../models/User");
+const app = require("../app");
+
+require("../db");
+
 const expect = chai.expect;
 
 
-const app = require("../app");
+beforeEach(async () => {
+    await User.deleteMany({});
+});
+
+after(async () => {
+    await mongoose.connection.close();
+});
 
 
 describe("Auth Routes", () => {
